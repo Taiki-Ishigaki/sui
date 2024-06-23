@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "rattle"
+name = "sui"
 version = "0.0.1"
 authors = [  
   { name="taiki-ishigaki", email="taiki.ishigaki@ieee.org" },
