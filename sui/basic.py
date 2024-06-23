@@ -16,6 +16,13 @@ def cross3(vec):
 
   return mat
 
+def cross4(vec):
+  mat = np.zeros((4,4))
+  mat[0:3,0:3] = cross3(vec[0:3])
+  mat[0:3,3] = vec[3:6]
+
+  return mat
+
 def cross6(vec):
   mat = np.zeros((6,6))
   mat[0:3,0:3] = cross3(vec[0:3])
