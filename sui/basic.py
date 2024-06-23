@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.11
+#!/usr/bin/env python3.9
 # -*- coding: utf-8 -*-
 # 2024.06.23 Created by T.Ishigaki
 import numpy as np
@@ -7,12 +7,12 @@ from scipy import integrate
 
 def cross3(vec):
   mat = np.zeros((3,3))
-  mat[1,2] =  vec[0]
-  mat[2,1] = -vec[0]
-  mat[2,0] =  vec[1]
-  mat[0,2] = -vec[1]
-  mat[0,1] =  vec[2]
-  mat[1,0] = -vec[2]
+  mat[1,2] = -vec[0]
+  mat[2,1] =  vec[0]
+  mat[2,0] = -vec[1]
+  mat[0,2] =  vec[1]
+  mat[0,1] = -vec[2]
+  mat[1,0] =  vec[2]
 
   return mat
 
