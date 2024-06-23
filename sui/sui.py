@@ -1,3 +1,6 @@
+#!/usr/bin/env python3.11
+# -*- coding: utf-8 -*-
+# 2024.06.23 Created by T.Ishigaki
 import numpy as np
 from scipy.linalg import expm
 from scipy import integrate
