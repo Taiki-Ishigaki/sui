@@ -1,9 +1,10 @@
-import basic
+from sui.basic import *
+from sui.geo import *
 
 def vec_to_rot_mat(vec, a):
   """
     回転行列の計算
-    sympyの場合，vecの大きさは1を想定
+    sympyの場合,vecの大きさは1を想定
   """
   if LIBRARY == 'numpy':
     theta = norm(vec)
@@ -43,7 +44,7 @@ def vec_to_rot_mat(vec, a):
 def vec_to_integ_rot_mat(vec, a):
   """
     回転行列の積分の計算
-    sympyの場合，vecの大きさは1を想定
+    sympyの場合,vecの大きさは1を想定
   """
   if LIBRARY == 'numpy':
     theta = norm(vec)
@@ -83,7 +84,7 @@ def vec_to_integ_rot_mat(vec, a):
 def vec_to_hom_mat(vec, t):
   """
     同次変換行列の計算
-    sympyの場合，vec[0:2]の大きさは1を想定
+    sympyの場合,vec[0:2]の大きさは1を想定
   """
   if LIBRARY == 'numpy':
     rot = vec[0:3]
@@ -106,7 +107,7 @@ def vec_to_hom_mat(vec, t):
 def vec_to_spa_mat(vec, t):
   """
     空間変換行列の計算
-    sympyの場合，vec[0:2]の大きさは1を想定
+    sympyの場合,vec[0:2]の大きさは1を想定
   """
 
   h = vec_to_hom_mat(vec, t)
