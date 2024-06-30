@@ -11,12 +11,6 @@ class SE3(LieAbstract):
     '''
     pass
 
-  def adjoint(self):
-    '''
-    adjoint expresion of Lie group
-    '''
-    pass
-
   @staticmethod
   def hat(vec):
     '''
@@ -81,8 +75,17 @@ class SE3(LieAbstract):
     pass
   
   def inverse(self):
+    self.mat[0:3,0:3] = self.mat[0:3,0:3].Transpose()
+    self.mat[0:3,3] = self.mat[0:3,0:3]@self.mat[0:3,0:3]
+    return self.mat
+  
+  def adjoint(self):
+    '''
+    adjoint expresion of Lie group
+    '''
     pass
   
+  @staticmethod
   def adj_hat(self, vec):
     mat = zeros(6,6)
 
@@ -92,9 +95,20 @@ class SE3(LieAbstract):
 
     return mat
   
+  @staticmethod
   def adj_hat_commute(self, vec):
     return -self.adj_hat(vec)
+
+  @staticmethod
+  def adj_vee(vec_hat):
+    vec = zeros(6,1)
+    
+    vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3])+SO3.vee(vec_hat[3:6,3:6]))
+    vec[3,6] = SO3.vee(vec_hat[3:6,0:3])
+
+    return vec
   
+  @staticmethod
   def adj_mat(self, vec, a):
     '''
     空間変換行列の計算
@@ -110,13 +124,14 @@ class SE3(LieAbstract):
 
     return mat
   
+  @staticmethod
   def adj_integ_mat(self, vec, a):
     pass
   
 class SE3wrench(SE3):
   
   @staticmethod
-  def hat(self, vec):
+  def hat(vec):
     mat = zeros(6,6)
     mat[0:3,0:3] = SO3.cross3(vec[0:3])
     mat[3:6,3:6] = SO3.cross3(vec[0:3])
@@ -125,10 +140,18 @@ class SE3wrench(SE3):
     return mat
   
   @staticmethod
-  def hat_commute(self, vec):
+  def hat_commute(vec):
     mat = zeros(6,6)
     mat[0:3,0:3] = SO3.cross3(vec[0:3])
     mat[0:3,3:6] = SO3.cross3(vec[3:6])
     mat[3:6,0:3] = SO3.cross3(vec[3:6])
 
     return -mat
+  
+  @staticmethod
+  def mat(vec, a):
+    return SE3.mat(vec, -a).Transpose()
+  
+  @staticmethod
+  def integ_mat(vec, a):
+    return SE3.integ_mat(vec, -a).Transpose()
