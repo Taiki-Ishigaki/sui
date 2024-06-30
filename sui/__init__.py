@@ -2,4 +2,5 @@
 # -*- coding: utf-8 -*-
 # 2024.06.23 Created by T.Ishigaki
 
-import sui.basic
+from . import basic
+from . import geometry
