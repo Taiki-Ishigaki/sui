@@ -3,4 +3,4 @@
 # 2024.06.23 Created by T.Ishigaki
 
 from . import basic
-from . import geometry
+from . import geo

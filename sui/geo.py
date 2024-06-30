@@ -1,4 +1,4 @@
-import basic
+from sui.basic import *
 
 def cross3(vec):
   mat = zeros(3,3)
