@@ -18,3 +18,15 @@ elif LIBRARY == 'sympy':
     return xp.zeros(shape1,shape2)
 else:
   raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+
+def jac_X_wrt_scaler(lie, vec, a, dvec):
+  rot = lie.mat(vec, a)
+  integ_rot = lie.adj_integ_mat(vec, -a)
+
+  return rot @ lie.hat(integ_rot @ dvec)
+
+def jac_Xv_wrt_vector(lie, vec, a, v):
+  rot = lie.mat(vec, a)
+  integ_rot = lie.adj_integ_mat(vec, -a)
+
+  return rot @ lie.hat_commute(v) @ integ_rot
