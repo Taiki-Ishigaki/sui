@@ -16,9 +16,9 @@ class SE3(LieAbstract):
     '''
     hat operator on the tanget space vector
     '''
-    mat = zeros(4,4)
+    mat = zeros((4,4))
 
-    mat[0:3,0:3] = SO3.cross3(vec[0:3])
+    mat[0:3,0:3] = SO3.hat(vec[0:3])
     mat[0:3,3] = vec[3:6]
 
     return mat
@@ -29,20 +29,20 @@ class SE3(LieAbstract):
     hat commute operator on the tanget space vector
     hat(a) @ b = hat_commute(b) @ a 
     '''
-    mat = zeros(4,6)
+    mat = zeros((4,6))
 
-    mat[0:3,0:3] = SO3.cross3(vec[0:3])
+    mat[0:3,0:3] = SO3.hat(vec[0:3])
     
-    return mat
+    return -mat
 
   @staticmethod
   def vee(vec_hat):
     '''
     a = vee(hat(a))
     '''
-    vec = zeros(6,1)
-    vec[0,3] = SO3.vee(vec_hat[0:3,0:3])
-    vec[3,6] = vec_hat[0:3,3]
+    vec = zeros(6)
+    vec[0:3] = SO3.vee(vec_hat[0:3,0:3])
+    vec[3:6] = vec_hat[0:3,3]
 
     return vec
   
@@ -61,7 +61,7 @@ class SE3(LieAbstract):
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
-    mat = zeros(4,4)
+    mat = zeros((4,4))
     mat[0:3,0:3] = SO3.mat(rot, a)
     V = SO3.integ_mat(rot, a)
 
@@ -80,28 +80,31 @@ class SE3(LieAbstract):
     return self.mat
   
   def adjoint(self):
-    '''
-    adjoint expresion of Lie group
-    '''
-    pass
+    mat = zeros(6,6)
+    
+    mat[0:3,0:3] = self.mat[0:3,0:3]
+    mat[3:6,3:6] = SO3.hat(self.mat[3,0:3])@self.mat[0:3,0:3]
+    mat[3:6,0:3] = self.mat[0:3,0:3]
+    
+    return mat
   
   @staticmethod
-  def adj_hat(self, vec):
-    mat = zeros(6,6)
+  def adj_hat(vec):
+    mat = zeros((6,6))
 
-    mat[0:3,0:3] = SO3.cross3(vec[0:3])
-    mat[3:6,3:6] = SO3.cross3(vec[0:3])
-    mat[3:6,0:3] = SO3.cross3(vec[3:6])
+    mat[0:3,0:3] = SO3.hat(vec[0:3])
+    mat[3:6,3:6] = SO3.hat(vec[0:3])
+    mat[3:6,0:3] = SO3.hat(vec[3:6])
 
     return mat
   
   @staticmethod
-  def adj_hat_commute(self, vec):
-    return -self.adj_hat(vec)
+  def adj_hat_commute(vec):
+    return -SE3.adj_hat(vec)
 
   @staticmethod
   def adj_vee(vec_hat):
-    vec = zeros(6,1)
+    vec = zeros((6,1))
     
     vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3])+SO3.vee(vec_hat[3:6,3:6]))
     vec[3,6] = SO3.vee(vec_hat[3:6,0:3])
@@ -117,9 +120,9 @@ class SE3(LieAbstract):
 
     h = self.mat(vec, a)
 
-    mat = zeros(6,6)
+    mat = zeros((6,6))
     mat[0:3,0:3] = h[0:3,0:3]
-    mat[3:6,0:3] = SO3.cross3(h[0:3,3])@h[0:3,0:3]
+    mat[3:6,0:3] = SO3.hat(h[0:3,3])@h[0:3,0:3]
     mat[3:6,3:6] = h[0:3,0:3]
 
     return mat
@@ -132,19 +135,19 @@ class SE3wrench(SE3):
   
   @staticmethod
   def hat(vec):
-    mat = zeros(6,6)
-    mat[0:3,0:3] = SO3.cross3(vec[0:3])
-    mat[3:6,3:6] = SO3.cross3(vec[0:3])
-    mat[0:3,3:6] = SO3.cross3(vec[3:6])
+    mat = zeros((6,6))
+    mat[0:3,0:3] = SO3.hat(vec[0:3])
+    mat[3:6,3:6] = SO3.hat(vec[0:3])
+    mat[0:3,3:6] = SO3.hat(vec[3:6])
 
     return mat
   
   @staticmethod
   def hat_commute(vec):
-    mat = zeros(6,6)
-    mat[0:3,0:3] = SO3.cross3(vec[0:3])
-    mat[0:3,3:6] = SO3.cross3(vec[3:6])
-    mat[3:6,0:3] = SO3.cross3(vec[3:6])
+    mat = zeros((6,6))
+    mat[0:3,0:3] = SO3.hat(vec[0:3])
+    mat[0:3,3:6] = SO3.hat(vec[3:6])
+    mat[3:6,0:3] = SO3.hat(vec[3:6])
 
     return -mat
   

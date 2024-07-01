@@ -11,7 +11,7 @@ class SO3(LieAbstract):
 
   @staticmethod
   def hat(vec):
-    mat = zeros(3,3)
+    mat = zeros((3,3))
     mat[1,2] = -vec[0]
     mat[2,1] =  vec[0]
     mat[2,0] = -vec[1]
@@ -22,12 +22,12 @@ class SO3(LieAbstract):
     return mat
   
   @staticmethod
-  def hat_commute(self, vec):
-    return -self.hat(vec)
+  def hat_commute(vec):
+    return -SO3.hat(vec)
 
   @staticmethod
   def vee(vec_hat):
-    vec = zeros(3,1)
+    vec = zeros(3)
     vec[0] = (-vec_hat[1,2] + vec_hat[2,1]) / 2
     vec[1] = (-vec_hat[2,0] + vec_hat[0,2]) / 2
     vec[2] = (-vec_hat[0,1] + vec_hat[1,0]) / 2
@@ -60,7 +60,7 @@ class SO3(LieAbstract):
     sa = xp.sin(a_)
     ca = xp.cos(a_)
 
-    mat = zeros(3,3)
+    mat = zeros((3,3))
 
     mat[0,0] = ca + (1-ca)*x*x
     mat[0,1] = (1-ca)*x*y - sa*z
@@ -101,7 +101,7 @@ class SO3(LieAbstract):
     sa = xp.sin(a_)
     ca = xp.cos(a_)
 
-    mat = zeros(3,3)
+    mat = zeros((3,3))
 
     mat[0,0] = sa + (a_-sa)*x*x
     mat[0,1] = (a_-sa)*x*y - (1-ca)*z
