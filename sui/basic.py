@@ -8,14 +8,17 @@ if LIBRARY == 'numpy':
   import numpy as xp
   def norm(vec):
     return xp.linalg.norm(vec)
-  def zeros(shape1, shape2=0):
-    return xp.zeros((shape1,shape2))
+  def zeros(shape):
+    return xp.zeros(shape)
 elif LIBRARY == 'sympy':
   import sympy as xp
   def norm(vec):
     return xp.sqrt(sum([elem**2 for elem in vec]))
-  def zeros(shape1, shape2=0):
-    return xp.zeros(shape1,shape2)
+  def zeros(shape):
+    if len(shape) == 2:
+      return xp.zeros(shape[0],shape[1])
+    elif len(shape) == 1:
+      return xp.vector.zeros(shape)
 else:
   raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
