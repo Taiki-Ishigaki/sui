@@ -9,12 +9,6 @@ class LieAbstract:
     '''
     pass
 
-  def adjoint(self):
-    '''
-    adjoint expresion of Lie group
-    '''
-    pass
-
   @staticmethod
   def hat(vec):
     '''
@@ -46,6 +40,12 @@ class LieAbstract:
     pass
   
   def inverse(self):
+    pass
+  
+  def adjoint(self):
+    '''
+    adjoint expresion of Lie group
+    '''
     pass
   
   def adj_hat(self, vec):
