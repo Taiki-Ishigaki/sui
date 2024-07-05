@@ -111,13 +111,13 @@ class SE3(LieAbstract):
     return vec
   
   @staticmethod
-  def adj_mat(self, vec, a):
+  def adj_mat(vec, a):
     '''
     空間変換行列の計算
     sympyの場合,vec[0:2]の大きさは1を想定
     '''
 
-    h = self.mat(vec, a)
+    h = SE3.mat(vec, a)
 
     mat = zeros((6,6))
     mat[0:3,0:3] = h[0:3,0:3]
