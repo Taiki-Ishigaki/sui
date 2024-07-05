@@ -1,4 +1,3 @@
-import numpy as np
 from sui.lie_abst import *
 from sui.basic import *
 

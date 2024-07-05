@@ -1,4 +1,3 @@
-import numpy as np
 from sui.basic import *
 from sui.lie_abst import *
 from sui.so3 import *
@@ -50,7 +49,7 @@ class SE3(LieAbstract):
   def mat(vec, a):
     '''
     同次変換行列の計算
-    sympyの場合,vec[0:2]の大きさは1を想定
+    sympyの場合,vec[0:3]の大きさは1を想定
     '''
     if LIBRARY == 'numpy':
       rot = vec[0:3]

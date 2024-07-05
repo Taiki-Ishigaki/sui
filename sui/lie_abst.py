@@ -1,4 +1,3 @@
-import numpy as np
 from sui.basic import *
 
 class LieAbstract:
