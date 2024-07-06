@@ -55,19 +55,19 @@ def norm(vec, LIB = 'numpy'):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
 def jac_lie_wrt_scaler(lie, vec, a, dvec):
-  rot = lie.mat(vec, a)
-  integ_rot = lie.adj_integ_mat(vec, -a)
+  m = lie.mat(vec, a)
+  integ_m = -lie.adj_integ_mat(vec, -a)
 
-  return rot @ lie.hat(integ_rot @ dvec)
+  return m @ lie.hat(integ_m @ dvec)
 
 def jac_adj_lie_wrt_scaler(lie, vec, a, dvec):
-  rot = lie.adj_mat(vec, a)
-  integ_rot = lie.adj_integ_mat(vec, -a)
+  m = lie.adj_mat(vec, a)
+  integ_m = -lie.adj_integ_mat(vec, -a)
 
-  return rot @ lie.adj_hat(integ_rot @ dvec)
+  return m @ lie.adj_hat(integ_m @ dvec)
 
 def jac_lie_v_wrt_vector(lie, vec, a, v):
-  rot = lie.mat(vec, a)
-  integ_rot = lie.adj_integ_mat(vec, -a)
+  m = lie.mat(vec, a)
+  integ_m = -lie.adj_integ_mat(vec, -a)
 
-  return rot @ lie.hat_commute(v) @ integ_rot
+  return m @ lie.hat_commute(v) @ integ_m
