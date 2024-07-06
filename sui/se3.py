@@ -167,7 +167,7 @@ class SE3(LieAbstract):
 
     mat = zeros((6,6), LIB)
     mat[0:3,0:3] = c[0:3,0:3]
-    mat[3:6,0:3] = SO3.hat(c[0:3,3])@c[0:3,0:3]
+    mat[3:6,0:3] = SO3.hat(c[0:3,3], LIB)@c[0:3,0:3]
     mat[3:6,3:6] = c[0:3,0:3]
 
     return mat
