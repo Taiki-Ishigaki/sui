@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.linalg import expm
+from scipy import integrate
 from sui.se3 import *
 
 def test_se3():
@@ -54,6 +55,29 @@ def test_se3_vee():
   res = SE3.vee(hat)
   
   np.testing.assert_array_equal(v, res)
+  
+def test_se3_mat():
+  v = np.random.rand(6)
+  a = np.random.rand(1)
+  res = SE3.mat(v, a)
+
+  m = expm(a*SE3.hat(v))
+  
+  np.testing.assert_allclose(res, m)
+  
+def test_se3_integ_mat():
+  v = np.random.rand(6)
+  a = np.random.rand(1)
+  res = SE3.integ_mat(v, a)
+
+  def integrad(s):
+    return expm(s*SE3.hat(v))
+  
+  m, _ = integrate.quad_vec(integrad, 0, a)
+  
+  m[3,3] = m[3,3] / a
+  
+  np.testing.assert_allclose(res, m)
   
 def test_se3_adj_hat():
   v = np.random.rand(6)  

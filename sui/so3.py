@@ -106,12 +106,14 @@ class SO3(LieAbstract):
         x = vec[0]/theta
         y = vec[1]/theta
         z = vec[2]/theta  
+        k = 1./theta
         
     elif LIB == 'sympy':
       a_ = a
       x = vec[0]
       y = vec[1]
       z = vec[2]
+      k = 1.
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
@@ -120,16 +122,63 @@ class SO3(LieAbstract):
 
     mat = zeros((3,3), LIB)
 
-    mat[0,0] = sa + (a_-sa)*x*x
-    mat[0,1] = (a_-sa)*x*y - (1-ca)*z
-    mat[0,2] = (a_-sa)*x*z + (1-ca)*y
-    mat[1,0] = (a_-sa)*y*x + (1-ca)*z
-    mat[1,1] = sa + (a_-sa)*y*y
-    mat[1,2] = (a_-sa)*y*z - (1-ca)*x
-    mat[2,0] = (a_-sa)*z*x - (1-ca)*y
-    mat[2,1] = (a_-sa)*z*y + (1-ca)*x
-    mat[2,2] = sa + (a_-sa)*z*z
+    mat[0,0] = k*sa + k*(a_-sa)*x*x
+    mat[0,1] = k*(a_-sa)*x*y - k*(1-ca)*z
+    mat[0,2] = k*(a_-sa)*z*x + k*(1-ca)*y
+    mat[1,0] = k*(a_-sa)*x*y + k*(1-ca)*z
+    mat[1,1] = k*sa + k*(a_-sa)*y*y
+    mat[1,2] = k*(a_-sa)*y*z - k*(1-ca)*x
+    mat[2,0] = k*(a_-sa)*z*x - k*(1-ca)*y
+    mat[2,1] = k*(a_-sa)*y*z + k*(1-ca)*x
+    mat[2,2] = k*sa + k*(a_-sa)*z*z
 
+    return mat
+  
+  @staticmethod
+  def integ2nd_mat(vec, a = 1., LIB = 'numpy'):
+    """
+      回転行列の積分の計算
+      sympyの場合,vecの大きさは1を想定
+    """
+    if LIB == 'numpy':
+      theta = norm(vec, LIB)
+      if theta != 1.0:
+        a_ = a*theta
+      else:
+        a_ = a
+
+      if iszero(theta):
+        return a*identity(3)
+      else:
+        x = vec[0]/theta
+        y = vec[1]/theta
+        z = vec[2]/theta  
+        k = 1./(theta*theta)
+        
+    elif LIB == 'sympy':
+      a_ = a
+      x = vec[0]
+      y = vec[1]
+      z = vec[2]
+      k = 1.
+    else:
+      raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+
+    sa = sin(a_, LIB)
+    ca = cos(a_, LIB)
+
+    mat = zeros((3,3), LIB)
+
+    mat[0,0] = k*(1-ca) + k*(0.5*a_**2-1+ca)*x*x
+    mat[0,1] = k*(0.5*a_**2-1+ca)*x*y - k*(a_-sa)*z
+    mat[0,2] = k*(0.5*a_**2-1+ca)*z*x + k*(a_-sa)*y
+    mat[1,0] = k*(0.5*a_**2-1+ca)*x*y + k*(a_-sa)*z
+    mat[1,1] = k*(1-ca) + k*(0.5*a_**2-1+ca)*y*y
+    mat[1,2] = k*(0.5*a_**2-1+ca)*y*z - k*(a_-sa)*x
+    mat[2,0] = k*(0.5*a_**2-1+ca)*z*x - k*(a_-sa)*y
+    mat[2,1] = k*(0.5*a_**2-1+ca)*y*z + k*(a_-sa)*x
+    mat[2,2] = k*(1-ca) + k*(0.5*a_**2-1+ca)*z*z
+    
     return mat
   
   @staticmethod

@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.linalg import expm
+from scipy import integrate
 from sui.so3 import *
 
 def test_so3():
@@ -57,3 +58,31 @@ def test_so3_mat():
   m = expm(a*SO3.hat(v))
   
   np.testing.assert_allclose(res, m)
+  
+def test_so3_integ_mat():
+  v = np.random.rand(3)
+  a = np.random.rand(1)
+  res = SO3.integ_mat(v, a)
+
+  def integrad(s):
+    return expm(s*SO3.hat(v))
+  
+  m, _ = integrate.quad_vec(integrad, 0, a)
+  
+  np.testing.assert_allclose(res, m)
+  
+def test_so3_integ_mat():
+  v = np.random.rand(3)
+  a = np.random.rand(1)
+  res = SO3.integ2nd_mat(v, a)
+
+  def integrad(s_):
+    def integrad_(s):
+      return expm(s*SO3.hat(v))
+    
+    m, _ = integrate.quad_vec(integrad_, 0, s_)
+    return m
+  
+  mat, _ = integrate.quad_vec(integrad, 0, a)
+  
+  np.testing.assert_allclose(res, mat)

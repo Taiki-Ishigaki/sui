@@ -100,7 +100,26 @@ class SE3(LieAbstract):
 
   @staticmethod
   def integ_mat(vec, a = 1., LIB = 'numpy'):
-    pass
+    '''
+    sympyの場合,vec[0:3]の大きさは1を想定
+    '''
+    if LIB == 'numpy':
+      rot = vec[0:3]
+      pos = vec[3:6]
+    elif LIB == 'sympy':
+      rot = sp.Matrix(vec[0:3])
+      pos = sp.Matrix(vec[3:6])
+    else:
+      raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+
+    mat = zeros((4,4), LIB)
+    mat[0:3,0:3] = SO3.integ_mat(rot, a, LIB)
+    V = SO3.integ2nd_mat(rot, a, LIB)
+
+    mat[0:3,3] = V @ pos
+    mat[3,3] = 1
+    
+    return mat
   
   @staticmethod
   def adj_hat(vec, LIB = 'numpy'):
