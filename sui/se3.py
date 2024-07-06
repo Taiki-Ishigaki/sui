@@ -97,6 +97,117 @@ class SE3(LieAbstract):
     mat[3,3] = 1
 
     return mat
+  
+  @staticmethod
+  def __integ_p_cross_r(vec, a = 1., LIB = 'numpy'):
+    """
+      回転行列の積分の計算
+      sympyの場合,vec[0:3]の大きさは1を想定
+    """
+    if LIB == 'numpy':
+      theta = norm(vec[0:3], LIB)
+      if theta != 1.0:
+        a_ = a*theta
+      else:
+        a_ = a
+
+      if iszero(theta):
+        return 0.5*a*a*SO3.hat(vec[3:6])
+      else:
+        u, v, w = vec[0:3]/theta
+        x, y, z = vec[3:6]
+        k = 1./(theta*theta)
+        
+    elif LIB == 'sympy':
+      a_ = a
+      u, v, w, x, y, z = vec
+      k = 1.
+    else:
+      raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+
+    sa = sin(a_, LIB)
+    ca = cos(a_, LIB)
+
+    mat = zeros((3,3), LIB)
+    
+    coeff1 = k*(2. - 2.*ca - 0.5*a_*sa)
+    coeff2 = k*(2.*a_ - 2.5*sa + 0.5*a_*ca)
+    coeff3 = k*(1. - ca - 0.5*a_*sa)
+    coeff4 = k*(a_ - 1.5*sa + 0.5*a_*ca)
+    
+    ux = u*x
+    uy = u*y 
+    uz = u*z
+    vx = v*x
+    vy = v*y
+    vz = v*z
+    wx = w*x
+    wy = w*y
+    wz = w*z
+    
+    uu = u*u
+    vv = v*v
+    ww = w*w
+    
+    uy_vx = uy + vx
+    uz_wx = uz + wx
+    vz_wy = vz + wy
+    
+    ux_vy = ux + vy
+    vy_wz = vy + wz
+    wz_ux = wz + ux
+    
+    uu_vv = uu + vv
+    vv_ww = vv + ww
+    ww_uu = ww + uu
+    
+    uu_vv_ww = uu + vv + ww
+    
+    m00_2 = -2*vy_wz
+    m10_2 = uy_vx
+    m20_2 = uz_wx
+    m11_2 = -2*wz_ux
+    m21_2 = vz_wy
+    m22_2 = -2*ux_vy
+    
+    m00_3 = u*v*z - u*w*y - v*m20_2 + w*m10_2
+    m10_3 = -v*w*y - v*m21_2 + w*m11_2 + z*-ww_uu
+    m20_3 = v*wz - v*m22_2 + w*m21_2 - y*-uu_vv
+    m01_3 = w*ux+ u*m20_2 - w*m00_2 - z*-vv_ww
+    m11_3 = -u*v*z + u*m21_2 + v*w*x - w*m10_2
+    m21_3 = -u*wz + u*m22_2 - w*m20_2 + x*-uu_vv
+    m02_3 = -v*ux - u*m10_2 + v*m00_2 + y*-vv_ww
+    m12_3 = u*vy - u*m11_2 + v*m10_2 - x*-ww_uu
+    m22_3 = u*w*y - u*m21_2 - v*w*x + v*m20_2
+    
+    mat[0,0] = coeff2 * m00_2 + coeff3 * m00_3 \
+      + coeff4 * (-v*m02_3 + w*m01_3 + vy_wz*uu_vv_ww)
+
+    mat[1,0] = coeff1 * z + coeff2 * m10_2 + coeff3 * m10_3 \
+      + coeff4 * (-v*m12_3 + w*m11_3 - uy*uu_vv_ww)
+    
+    mat[2,0] = coeff1 * -y + coeff2 * m20_2 + coeff3 * m20_3 \
+      + coeff4 * (-v*m22_3 + w*m21_3 - uz*uu_vv_ww)
+
+    mat[0,1] = coeff1 * -z + coeff2 * m10_2 + coeff3 * m01_3 \
+      + coeff4 * (u*m02_3 - w*m00_3 - vx*uu_vv_ww)
+
+    mat[1,1] = coeff2 * m11_2 + coeff3 * m11_3 \
+      + coeff4 * (u*m12_3 - w*m10_3 + wz_ux*uu_vv_ww)
+    
+    mat[2,1] = coeff1 * x + coeff2 * m21_2 + coeff3 * m21_3 \
+      + coeff4 * (u*m22_3 - w*m20_3 - vz*uu_vv_ww)
+    
+    mat[0,2] = coeff1 * y + coeff2 * m20_2 + coeff3 * m02_3 \
+      + coeff4 * (-u*m01_3 + v*m00_3 - wx*uu_vv_ww)
+
+    mat[1,2] = coeff1 * -x + coeff2 * m21_2 + coeff3 * m12_3 \
+      + coeff4 * (-u*m11_3 + v*m10_3 - wy*uu_vv_ww)
+    
+    mat[2,2] = coeff2 * m22_2 + coeff3 * m22_3 \
+      + coeff4 * (-u*m21_3 + v*m20_3 + ux_vy*uu_vv_ww)
+
+    return mat
 
   @staticmethod
   def integ_mat(vec, a = 1., LIB = 'numpy'):
@@ -162,13 +273,23 @@ class SE3(LieAbstract):
   
   @staticmethod
   def adj_integ_mat(vec, a, LIB = 'numpy'):
+    """
+      回転行列の積分の計算
+      sympyの場合,vec[0:3]の大きさは1を想定
+    """
+    if LIB == 'numpy':
+      rot = vec[0:3]
+    elif LIB == 'sympy':
+      rot = sp.Matrix(vec[0:3])
+    else:
+      raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
     
-    c = SE3.integ_mat(vec, a, LIB)
-
-    mat = zeros((6,6), LIB)
-    mat[0:3,0:3] = c[0:3,0:3]
-    mat[3:6,0:3] = SO3.hat(c[0:3,3], LIB)@c[0:3,0:3]
-    mat[3:6,3:6] = c[0:3,0:3]
+    r = SO3.integ_mat(rot, a, LIB)
+  
+    mat = zeros((6,6))
+    mat[0:3,0:3] = r
+    mat[3:6,0:3] = SE3.__integ_p_cross_r(vec, a, LIB)
+    mat[3:6,3:6] = r
 
     return mat
   
