@@ -1,4 +1,5 @@
 import numpy as np
+import sympy as sp
 from scipy.linalg import expm
 from scipy import integrate
 from sui.se3 import *
@@ -100,3 +101,28 @@ def test_se3_adj_hat_commute():
   res2 = SE3.adj_hat_commute(v2) @ v1
   
   np.testing.assert_allclose(res1, res2)
+  
+def test_se3_adj_mat():
+  v = np.random.rand(6)
+  a = np.random.rand(1)
+  res = SE3.adj_mat(v, a)
+
+  m = expm(a*SE3.adj_hat(v))
+  
+  np.testing.assert_allclose(res, m)
+  
+def test_se3_adj_integ_mat():
+  vec = np.random.rand(6)
+  angle = np.random.rand()
+
+  res = SE3.adj_integ_mat(vec, angle)
+
+  def integrad(s):
+    return expm(s*SE3.adj_hat(vec))
+  
+  m, _ = integrate.quad_vec(integrad, 0, angle)
+  
+  print(res)
+  print(m)
+    
+  np.testing.assert_allclose(res, m)
