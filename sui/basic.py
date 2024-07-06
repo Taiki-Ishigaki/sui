@@ -2,26 +2,6 @@
 # -*- coding: utf-8 -*-
 # 2024.06.23 Created by T.Ishigaki
 
-# LIBRARY = "numpy"
-
-# if LIBRARY == 'numpy':
-#   import numpy as xp
-#   def norm(vec):
-#     return xp.linalg.norm(vec)
-#   def zeros(shape):
-#     return xp.zeros(shape)
-# elif LIBRARY == 'sympy':
-#   import sympy as xp
-#   def norm(vec):
-#     return xp.sqrt(sum([elem**2 for elem in vec]))
-#   def zeros(shape):
-#     if len(shape) == 2:
-#       return xp.zeros(shape[0],shape[1])
-#     elif len(shape) == 1:
-#       return xp.vector.zeros(shape)
-# else:
-#   raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
-
 import numpy as np
 import sympy as sp
 
@@ -70,7 +50,6 @@ def norm(vec, LIB = 'numpy'):
     if LIB == 'numpy':
       return np.linalg.norm(vec)
     elif LIB == 'sympy':
-      # return sp.sqrt(sum([elem**2 for elem in vec]))
       return sp.sqrt(vec.dot(vec))
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
