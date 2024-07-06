@@ -1,5 +1,31 @@
 import numpy as np
+from scipy.linalg import expm
 from sui.se3 import *
+
+def test_se3():
+  res = SE3()
+  e = np.identity(4)
+
+  np.testing.assert_array_equal(res.matrix(), e)
+  
+def test_se3_inv():
+  v = np.random.rand(6) 
+  rot = SE3(v)
+  
+  res = rot.matrix() @ rot.inverse()
+  
+  e = np.identity(4)
+  
+  np.testing.assert_allclose(res, e, rtol=1e-15, atol=1e-15)
+  
+def test_se3_adj():
+  v = np.random.rand(6) 
+  res = SE3(v)
+  
+  print(res.adjoint())
+  print(expm(SE3.adj_hat(v)))
+  
+  np.testing.assert_allclose(res.adjoint(), expm(SE3.adj_hat(v)))
 
 def test_se3_hat():
   v = np.random.rand(6)  
@@ -49,4 +75,4 @@ def test_se3_adj_hat_commute():
   res1 = SE3.adj_hat(v1) @ v2
   res2 = SE3.adj_hat_commute(v2) @ v1
   
-  np.testing.assert_array_equal(res1, res2)
+  np.testing.assert_allclose(res1, res2)

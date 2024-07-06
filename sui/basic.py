@@ -2,25 +2,78 @@
 # -*- coding: utf-8 -*-
 # 2024.06.23 Created by T.Ishigaki
 
-LIBRARY = "numpy"
+# LIBRARY = "numpy"
 
-if LIBRARY == 'numpy':
-  import numpy as xp
-  def norm(vec):
-    return xp.linalg.norm(vec)
-  def zeros(shape):
-    return xp.zeros(shape)
-elif LIBRARY == 'sympy':
-  import sympy as xp
-  def norm(vec):
-    return xp.sqrt(sum([elem**2 for elem in vec]))
-  def zeros(shape):
+# if LIBRARY == 'numpy':
+#   import numpy as xp
+#   def norm(vec):
+#     return xp.linalg.norm(vec)
+#   def zeros(shape):
+#     return xp.zeros(shape)
+# elif LIBRARY == 'sympy':
+#   import sympy as xp
+#   def norm(vec):
+#     return xp.sqrt(sum([elem**2 for elem in vec]))
+#   def zeros(shape):
+#     if len(shape) == 2:
+#       return xp.zeros(shape[0],shape[1])
+#     elif len(shape) == 1:
+#       return xp.vector.zeros(shape)
+# else:
+#   raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+
+import numpy as np
+import sympy as sp
+
+import math
+
+def iszero(x):
+  tolerance = 1e-8  # 許容範囲
+  return math.isclose(x, 0, abs_tol=tolerance)
+
+def sin(theta, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.sin(theta)
+  elif LIB == 'sympy':
+    return sp.sin(theta)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+  
+def cos(theta, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.cos(theta)
+  elif LIB == 'sympy':
+    return sp.cos(theta)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+
+def zeros(shape, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.zeros(shape)
+  elif LIB == 'sympy':
     if len(shape) == 2:
-      return xp.zeros(shape[0],shape[1])
+      return sp.zeros(shape[0],shape[1])
     elif len(shape) == 1:
-      return xp.vector.zeros(shape)
-else:
-  raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+      return sp.vector.zeros(shape)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+  
+def identity(size, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.identity(size)
+  elif LIB == 'sympy':
+    return sp.identity(size)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")  
+
+def norm(vec, LIB = 'numpy'):
+    if LIB == 'numpy':
+      return np.linalg.norm(vec)
+    elif LIB == 'sympy':
+      # return sp.sqrt(sum([elem**2 for elem in vec]))
+      return sp.sqrt(vec.dot(vec))
+    else:
+      raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
 def jac_X_wrt_scaler(lie, vec, a, dvec):
   rot = lie.mat(vec, a)
