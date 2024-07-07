@@ -1,73 +1,73 @@
 #!/usr/bin/env python3.9
 # -*- coding: utf-8 -*-
 # 2024.06.23 Created by T.Ishigaki
+
 import numpy as np
-from scipy.linalg import expm
-from scipy import integrate
+import sympy as sp
 
-def cross3(vec):
-  mat = np.zeros((3,3))
-  mat[1,2] = -vec[0]
-  mat[2,1] =  vec[0]
-  mat[2,0] = -vec[1]
-  mat[0,2] =  vec[1]
-  mat[0,1] = -vec[2]
-  mat[1,0] =  vec[2]
+import math
 
-  return mat
+def iszero(x):
+  tolerance = 1e-8  # 許容範囲
+  return math.isclose(x, 0, abs_tol=tolerance)
 
-def cross4(vec):
-  mat = np.zeros((4,4))
-  mat[0:3,0:3] = cross3(vec[0:3])
-  mat[0:3,3] = vec[3:6]
+def sin(theta, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.sin(theta)
+  elif LIB == 'sympy':
+    return sp.sin(theta)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+  
+def cos(theta, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.cos(theta)
+  elif LIB == 'sympy':
+    return sp.cos(theta)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
-  return mat
+def zeros(shape, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.zeros(shape)
+  elif LIB == 'sympy':
+    if len(shape) == 2:
+      return sp.zeros(shape[0],shape[1])
+    elif len(shape) == 1:
+      return sp.vector.zeros(shape)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+  
+def identity(size, LIB = 'numpy'):
+  if LIB == 'numpy':
+    return np.identity(size)
+  elif LIB == 'sympy':
+    return sp.identity(size)
+  else:
+    raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")  
 
-def cross6(vec):
-  mat = np.zeros((6,6))
-  mat[0:3,0:3] = cross3(vec[0:3])
-  mat[3:6,3:6] = cross3(vec[0:3])
-  mat[3:6,0:3] = cross3(vec[3:6])
+def norm(vec, LIB = 'numpy'):
+    if LIB == 'numpy':
+      return np.linalg.norm(vec)
+    elif LIB == 'sympy':
+      return sp.sqrt(vec.dot(vec))
+    else:
+      raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
-  return mat
+def jac_lie_wrt_scaler(lie, vec, a, dvec):
+  rot = lie.mat(vec, a)
+  integ_rot = lie.adj_integ_mat(vec, -a)
 
-def cross6dual(vec):
-  mat = np.zeros((6,6))
-  mat[0:3,0:3] = cross3(vec[0:3])
-  mat[3:6,3:6] = cross3(vec[0:3])
-  mat[0:3,3:6] = cross3(vec[3:6])
+  return rot @ lie.hat(integ_rot @ dvec)
 
-  return mat
+def jac_adj_lie_wrt_scaler(lie, vec, a, dvec):
+  rot = lie.adj_mat(vec, a)
+  integ_rot = lie.adj_integ_mat(vec, -a)
 
-def cross6dual_(vec):
-  mat = np.zeros((6,6))
-  mat[0:3,0:3] = cross3(vec[0:3])
-  mat[0:3,3:6] = cross3(vec[3:6])
-  mat[3:6,0:3] = cross3(vec[3:6])
+  return rot @ lie.adj_hat(integ_rot @ dvec)
 
-  return -mat
+def jac_lie_v_wrt_vector(lie, vec, a, v):
+  rot = lie.mat(vec, a)
+  integ_rot = lie.adj_integ_mat(vec, -a)
 
-def pX_pt(t, x, px_pt, cross_func):
-  m = cross_func(x)
-
-  def integrad(t_):
-    return expm(-t_*m)
-  result, _ = integrate.quad_vec(integrad, 0, t)
-  C = result
-
-  return expm(t*m) @ cross_func(C@px_pt)
-
-def pAdualxv_pa(a, v, t):
-  m = cross6dual(a)
-  A = expm(t*m)
-
-  cross_v = cross6dual_(v)
-
-  m = cross6(a)
-
-  def integrad(t_):
-    return expm(-t_*m)
-  result, _ = integrate.quad_vec(integrad, 0, t)
-  C = result
-
-  return A @ cross_v @ C
+  return rot @ lie.hat_commute(v) @ integ_rot

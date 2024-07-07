@@ -2,4 +2,7 @@
 # -*- coding: utf-8 -*-
 # 2024.06.23 Created by T.Ishigaki
 
-import sui.basic
+from . import basic
+from . import lie_abst
+from . import so3
+from . import se3
