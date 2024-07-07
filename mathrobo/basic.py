@@ -54,20 +54,20 @@ def norm(vec, LIB = 'numpy'):
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
 
-def jac_lie_wrt_scaler(lie, vec, a, dvec):
-  m = lie.mat(vec, a)
-  integ_m = -lie.adj_integ_mat(vec, -a)
+def jac_lie_wrt_scaler(lie, vec, a, dvec, LIB = 'numpy'):
+  m = lie.mat(vec, a, LIB)
+  integ_m = -lie.adj_integ_mat(vec, -a, LIB)
 
-  return m @ lie.hat(integ_m @ dvec)
+  return m @ lie.hat(integ_m @ dvec, LIB)
 
-def jac_adj_lie_wrt_scaler(lie, vec, a, dvec):
-  m = lie.adj_mat(vec, a)
-  integ_m = -lie.adj_integ_mat(vec, -a)
+def jac_adj_lie_wrt_scaler(lie, vec, a, dvec, LIB = 'numpy'):
+  m = lie.adj_mat(vec, a, LIB)
+  integ_m = -lie.adj_integ_mat(vec, -a, LIB)
 
-  return m @ lie.adj_hat(integ_m @ dvec)
+  return m @ lie.adj_hat(integ_m @ dvec, LIB)
 
-def jac_lie_v_wrt_vector(lie, vec, a, v):
-  m = lie.mat(vec, a)
-  integ_m = -lie.adj_integ_mat(vec, -a)
+def jac_lie_v_wrt_vector(lie, vec, a, v, LIB = 'numpy'):
+  m = lie.mat(vec, a, LIB)
+  integ_m = -lie.adj_integ_mat(vec, -a, LIB)
 
-  return m @ lie.hat_commute(v) @ integ_m
+  return m @ lie.hat_commute(v, LIB) @ integ_m
