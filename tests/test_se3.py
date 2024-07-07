@@ -126,3 +126,73 @@ def test_se3_adj_integ_mat():
   print(m)
     
   np.testing.assert_allclose(res, m)
+  
+def test_se3_jac_lie_wrt_scaler():
+  v = np.random.rand(6)
+  dv = np.random.rand(6)
+  a = np.random.rand()
+  eps = 1e-8
+  
+  res = jac_lie_wrt_scaler(SE3, v, a, dv)
+  
+  r = SE3.mat(v, a)
+  v_ = v + dv*eps
+  r_ = SE3.mat(v_, a)
+  
+  dr = (r_ - r) / eps
+  
+  np.testing.assert_allclose(res, dr, 1e-4)
+  
+def test_se3_jac_lie_wrt_scaler_integ():
+  v = np.random.rand(6)
+  dv = np.random.rand(6)
+  a = np.random.rand()
+  eps = 1e-8
+  
+  def integrad(s):
+    return jac_lie_wrt_scaler(SE3, v, s, dv)
+  
+  res, _ = integrate.quad_vec(integrad, 0, a)
+  
+  r = SE3.integ_mat(v, a)
+  v_ = v + dv*eps
+  r_ = SE3.integ_mat(v_, a)
+  
+  dr = (r_ - r) / eps
+  
+  np.testing.assert_allclose(res, dr, 1e-4)
+
+def test_se3_jac_adj_lie_wrt_scaler():
+  v = np.random.rand(6)
+  dv = np.random.rand(6)
+  a = np.random.rand()
+  eps = 1e-8
+  
+  res = jac_adj_lie_wrt_scaler(SE3, v, a, dv)
+  
+  r = SE3.adj_mat(v, a)
+  v_ = v + dv*eps
+  r_ = SE3.adj_mat(v_, a)
+  
+  dr = (r_ - r) / eps
+  
+  np.testing.assert_allclose(res, dr, 1e-4)
+  
+def test_se3_adj_jac_adj_lie_wrt_scaler_integ():
+  v = np.random.rand(6)
+  dv = np.random.rand(6)
+  a = np.random.rand()
+  eps = 1e-8
+  
+  def integrad(s):
+    return jac_adj_lie_wrt_scaler(SE3, v, s, dv)
+  
+  res, _ = integrate.quad_vec(integrad, 0, a)
+  
+  r = SE3.adj_integ_mat(v, a)
+  v_ = v + dv*eps
+  r_ = SE3.adj_integ_mat(v_, a)
+  
+  dr = (r_ - r) / eps
+  
+  np.testing.assert_allclose(res, dr, 1e-4)
