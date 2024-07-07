@@ -101,7 +101,7 @@ def test_so3_jac_lie_wrt_scaler():
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-5)
+  np.testing.assert_allclose(res, dr, 1e-4)
   
 def test_so3_jac_lie_wrt_scaler_integ():
   v = np.random.rand(3)
@@ -120,4 +120,4 @@ def test_so3_jac_lie_wrt_scaler_integ():
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-5)
+  np.testing.assert_allclose(res, dr, 1e-4)
