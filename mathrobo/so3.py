@@ -1,5 +1,5 @@
-from sui.lie_abst import *
-from sui.basic import *
+from mathrobo.lie_abst import *
+from mathrobo.basic import *
 
 class SO3(LieAbstract):
   def __init__(self, vec = zeros(3), LIB = 'numpy'):
