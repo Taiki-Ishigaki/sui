@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.linalg import expm
 from scipy import integrate
-from sui.so3 import *
+from mathrobo.so3 import *
 
 def test_so3():
   res = SO3()
