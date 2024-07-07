@@ -2,7 +2,7 @@ import numpy as np
 import sympy as sp
 from scipy.linalg import expm
 from scipy import integrate
-from sui.se3 import *
+from mathrobo.se3 import *
 
 def test_se3():
   res = SE3()

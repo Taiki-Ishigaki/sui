@@ -1,4 +1,4 @@
-from sui.basic import *
+from mathrobo.basic import *
 
 class LieAbstract:
 
