@@ -42,7 +42,10 @@ def identity(size, LIB = 'numpy'):
   if LIB == 'numpy':
     return np.identity(size)
   elif LIB == 'sympy':
-    return sp.identity(size)
+    m = sp.zeros(size,size)
+    for i in range(size):
+      m[i,i] = 1
+    return m
   else:
     raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")  
 
