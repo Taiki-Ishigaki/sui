@@ -1,4 +1,4 @@
-# sui
+# MathRobotics
 ```
 pip install -r requirements.txt
 ```
@@ -7,7 +7,7 @@ install package
 pip install .
 ```
 
-## test
+## Test
 ```
 cd test
 pytest

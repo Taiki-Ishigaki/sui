@@ -195,3 +195,62 @@ class SO3(LieAbstract):
   @staticmethod
   def adj_integ_mat(vec, a, LIB = 'numpy'):
     return SO3.integ_mat(vec, a, LIB)
+  
+class SO3wre(SO3):
+  @staticmethod
+  def hat(vec, LIB = 'numpy'):
+    return -SO3.hat(vec, LIB)
+  
+  @staticmethod
+  def hat_commute(vec, LIB = 'numpy'):
+    return SO3.hat(vec, LIB)
+  
+  @staticmethod
+  def mat(vec, a, LIB = 'numpy'):
+    return SO3.mat(vec, a, LIB).transpose()
+  
+  @staticmethod
+  def integ_mat(vec, a, LIB = 'numpy'):
+    return SO3.integ_mat(vec, a, LIB).transpose()
+  
+class SO3ine(SO3):
+  @staticmethod
+  def hat(vec, LIB = 'numpy'):
+    mat = zeros((3,3), LIB)
+
+    mat[0,0] = vec[0]
+    mat[0,1] = vec[5]
+    mat[0,2] = vec[4]
+    mat[1,0] = vec[5]
+    mat[1,1] = vec[1]
+    mat[1,2] = vec[3]
+    mat[2,0] = vec[4]
+    mat[2,1] = vec[3]
+    mat[2,2] = vec[2]
+
+    return mat
+  
+  @staticmethod
+  def hat_commute(vec, LIB = 'numpy'):
+    mat = zeros((3, 6), LIB)
+
+    mat[0,0] = vec[0]
+    mat[1,1] = vec[1]
+    mat[2,2] = vec[2]
+
+    mat[1,5] = vec[0]
+    mat[2,4] = vec[0]
+    mat[2,3] = vec[1]
+    mat[0,5] = vec[1]
+    mat[0,4] = vec[2]
+    mat[1,3] = vec[2]
+
+    return mat
+  
+  @staticmethod
+  def mat(vec, a, LIB = 'numpy'):
+    return SO3.mat(vec, a, LIB).transpose()
+  
+  @staticmethod
+  def integ_mat(vec, a, LIB = 'numpy'):
+    return SO3.integ_mat(vec, a, LIB).transpose()

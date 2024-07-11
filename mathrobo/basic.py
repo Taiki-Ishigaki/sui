@@ -53,6 +53,29 @@ def norm(vec, LIB = 'numpy'):
       return sp.sqrt(vec.dot(vec))
     else:
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
+    
+def gq_integrate(func, a, b, digit = 5, LIB = 'numpy'):
+    if LIB == 'numpy':
+      integ = np.zeros((func(0).shape))
+
+      if digit == 3:
+        quad_x = np.array((-0.77459666924, 0, 0.77459666924))
+        quad_weight = np.array((0.55555555555, 0.88888888888, 0.55555555555))
+      elif digit == 4:
+        quad_x = np.array((-0.8611363116, -0.3399810436, 0.3399810436, 0.8611363116))
+        quad_weight = np.array((0.3478548451, 0.6521451549, 0.6521451549, 0.3478548451))
+      elif digit == 5:
+        quad_x = np.array((-0.9061798459, -0.5384693101, 0, 0.5384693101, 0.9061798459))
+        quad_weight = np.array((0.2369268851, 0.4786286705, 0.5688888889, 0.4786286705, 0.2369268851))
+      
+      for i in range(digit):
+        w = quad_weight[i] * (b - a) * 0.5
+        x = quad_x[i] * (b - a) * 0.5 + (a + b) * 0.5
+        integ += w*func(x)
+
+      return integ
+    else:
+      raise ValueError("This method for 'numpy'")
 
 def jac_lie_wrt_scaler(lie, vec, a, dvec, LIB = 'numpy'):
   m = lie.mat(vec, a, LIB)
