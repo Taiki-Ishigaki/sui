@@ -1,5 +1,8 @@
 import sympy as sp
+
 import numpy as np
+from scipy import integrate
+
 from mathrobo.so3 import *
 
 def test_so3_hat():
@@ -108,5 +111,34 @@ def test_so3_ac_lie_wrt_scaler():
   res = r.subs([(x, vec[0]), (y, vec[1]), (z, vec[2]), (dx, dvec[0]), (dy, dvec[1]), (dz, dvec[2]), (a, angle[0])])
   
   m = jac_lie_wrt_scaler(SO3, vec, angle, dvec)
+  
+  np.testing.assert_allclose(m, sympy_to_numpy(res))
+
+def test_so3_jac_lie_wrt_scaler_integ():
+  a_ = sp.symbols('a_')
+  a = sp.symbols('a')
+  x, y, z = sp.symbols('x y z')
+  dx, dy, dz = sp.symbols('dx dy dz')
+  v = sp.Matrix([x, y, z])
+  dv = sp.Matrix([dx, dy, dz])
+  
+  r_ = jac_lie_wrt_scaler(SO3, v, a_, dv, 'sympy')
+  res_ = sp.integrate(r_, [a_, 0, a])
+  
+  angle = np.random.rand(1)
+  vec = np.random.rand(3)
+  dvec = np.random.rand(3)
+  
+  vec = vec / np.linalg.norm(vec)
+  
+  def integrad(s):
+    return jac_lie_wrt_scaler(SO3, vec, s, dvec)
+  
+  m, _ = integrate.quad_vec(integrad, 0, angle)
+  
+  res = res_.subs([(x, vec[0]), (y, vec[1]), (z, vec[2]), (dx, dvec[0]), (dy, dvec[1]), (dz, dvec[2]), (a, angle[0])])
+
+  print(m)
+  print(res)
   
   np.testing.assert_allclose(m, sympy_to_numpy(res))
