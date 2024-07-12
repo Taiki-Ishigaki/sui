@@ -9,13 +9,9 @@ def test_so3_hat():
   x, y, z = sp.symbols('x y z')
   v = sp.Matrix([x, y, z])
   
-  # m = sp.Matrix([[0., -v[2], v[1]],[v[2], 0., -v[0]],[-v[1], v[0], 0.]])
   m = sp.Matrix([[0., -v[2], v[1]],[v[2], 0., -v[0]],[-v[1], v[0], 0.]])
   
   res = SO3.hat(v, 'sympy')
-  
-  print(m)
-  print(res)
   
   assert res == m
   
