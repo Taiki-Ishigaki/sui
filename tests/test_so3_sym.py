@@ -137,8 +137,5 @@ def test_so3_jac_lie_wrt_scaler_integ():
   m, _ = integrate.quad_vec(integrad, 0, angle)
   
   res = res_.subs([(x, vec[0]), (y, vec[1]), (z, vec[2]), (dx, dvec[0]), (dy, dvec[1]), (dz, dvec[2]), (a, angle[0])])
-
-  print(m)
-  print(res)
   
   np.testing.assert_allclose(m, sympy_to_numpy(res))
