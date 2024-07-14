@@ -31,10 +31,10 @@ def zeros(shape, LIB = 'numpy'):
   if LIB == 'numpy':
     return np.zeros(shape)
   elif LIB == 'sympy':
-    if len(shape) == 2:
+    if type(shape) == int:
+      return sp.zeros(shape,1)
+    elif type(shape) == tuple and len(shape) == 2:
       return sp.zeros(shape[0],shape[1])
-    elif len(shape) == 1:
-      return sp.vector.zeros(shape)
   else:
     raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
   
@@ -42,7 +42,10 @@ def identity(size, LIB = 'numpy'):
   if LIB == 'numpy':
     return np.identity(size)
   elif LIB == 'sympy':
-    return sp.identity(size)
+    m = sp.zeros(size,size)
+    for i in range(size):
+      m[i,i] = 1
+    return m
   else:
     raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")  
 
@@ -94,3 +97,12 @@ def jac_lie_v_wrt_vector(lie, vec, a, v, LIB = 'numpy'):
   integ_m = -lie.adj_integ_mat(vec, -a, LIB)
 
   return m @ lie.hat_commute(v, LIB) @ integ_m
+
+def sympy_to_numpy(sp_mat):
+  return np.array(sp_mat).astype(np.float64)
+
+def sympy_subs_mat(m, vec_str, vec_val):
+  for i in range(len(vec_str)):
+    m = m.subs([(vec_str[i], vec_val[i])])
+
+  return m

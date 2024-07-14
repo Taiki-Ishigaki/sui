@@ -71,7 +71,7 @@ def test_so3_integ_mat():
   
   np.testing.assert_allclose(res, m)
   
-def test_so3_integ_mat():
+def test_so3_integ2nd_mat():
   v = np.random.rand(3)
   a = np.random.rand(1)
   res = SO3.integ2nd_mat(v, a)
