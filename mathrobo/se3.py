@@ -69,8 +69,13 @@ class SE3(LieAbstract):
     a = vee(hat(a))
     '''
     vec = zeros(6, LIB)
-    vec[0:3] = SO3.vee(vec_hat[0:3,0:3], LIB)
-    vec[3:6] = vec_hat[0:3,3]
+    
+    if(LIB == 'sympy'):
+      vec[0:3,0] = SO3.vee(vec_hat[0:3,0:3], LIB)
+      vec[3:6,0] = vec_hat[0:3,3]
+    else:
+      vec[0:3] = SO3.vee(vec_hat[0:3,0:3], LIB)
+      vec[3:6] = vec_hat[0:3,3]
 
     return vec
   
