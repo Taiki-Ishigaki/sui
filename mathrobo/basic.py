@@ -99,4 +99,10 @@ def jac_lie_v_wrt_vector(lie, vec, a, v, LIB = 'numpy'):
   return m @ lie.hat_commute(v, LIB) @ integ_m
 
 def sympy_to_numpy(sp_mat):
-    return np.array(sp_mat).astype(np.float64)
+  return np.array(sp_mat).astype(np.float64)
+
+def sympy_subs_mat(m, vec_str, vec_val):
+  for i in range(len(vec_str)):
+    m = m.subs([(vec_str[i], vec_val[i])])
+
+  return m
