@@ -253,7 +253,7 @@ class SE3(LieAbstract):
 
   @staticmethod
   def adj_vee(vec_hat, LIB = 'numpy'):
-    vec = zeros((6,1), LIB)
+    vec = zeros(6, LIB)
     
     vec[0,3] = 0.5*(SO3.vee(vec_hat[0:3,0:3], LIB)+SO3.vee(vec_hat[3:6,3:6]), LIB)
     vec[3,6] = SO3.vee(vec_hat[3:6,0:3], LIB)
@@ -269,7 +269,7 @@ class SE3(LieAbstract):
 
     h = SE3.mat(vec, a, LIB = 'numpy')
 
-    mat = zeros((6,6))
+    mat = zeros((6,6), LIB)
     mat[0:3,0:3] = h[0:3,0:3]
     mat[3:6,0:3] = SO3.hat(h[0:3,3], LIB)@h[0:3,0:3]
     mat[3:6,3:6] = h[0:3,0:3]
@@ -290,8 +290,8 @@ class SE3(LieAbstract):
       raise ValueError("Unsupported library. Choose 'numpy' or 'sympy'.")
     
     r = SO3.integ_mat(rot, a, LIB)
-  
-    mat = zeros((6,6))
+
+    mat = zeros((6,6), LIB)
     mat[0:3,0:3] = r
     mat[3:6,0:3] = SE3.__integ_p_cross_r(vec, a, LIB)
     mat[3:6,3:6] = r
