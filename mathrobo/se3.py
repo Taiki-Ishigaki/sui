@@ -37,6 +37,16 @@ class SE3(LieAbstract):
     mat[3:6,3:6] = self._rot
     
     return mat
+  
+  def adj_inv(self):
+    mat = zeros((6,6), self.lib)
+    
+    mat[0:3,0:3] = self._rot.transpose()
+    mat[3:6,0:3] = -self._rot.transpose() @ SO3.hat(self._pos, self.lib)
+    mat[3:6,3:6] = self._rot.transpose()
+    
+    return mat
+
 
   @staticmethod
   def hat(vec, LIB = 'numpy'):

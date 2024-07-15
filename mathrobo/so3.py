@@ -18,6 +18,9 @@ class SO3(LieAbstract):
   def adjoint(self):
     return self._rot
 
+  def adj_inv(self):
+    return self._rot.transpose()
+
   @staticmethod
   def hat(vec, LIB = 'numpy'):
     mat = zeros((3,3), LIB)

@@ -32,6 +32,18 @@ def test_so3_adj():
   res = SO3(r)
   
   np.testing.assert_array_equal(res.adjoint(), res.matrix())
+  
+def test_so3_adj_inv():
+  v = np.random.rand(3) 
+  r = SO3.mat(v)
+  
+  rot = SO3(r)
+  
+  res = rot.adjoint() @ rot.adj_inv()
+  
+  e = np.identity(3)
+  
+  np.testing.assert_allclose(res, e, rtol=1e-15, atol=1e-15)
 
 def test_so3_hat():
   v = np.random.rand(3)  
