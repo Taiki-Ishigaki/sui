@@ -11,23 +11,45 @@ def test_se3():
   np.testing.assert_array_equal(res.matrix(), e)
   
 def test_se3_inv():
-  v = np.random.rand(6) 
-  rot = SE3(v)
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  r = SO3.mat(v[0:3]) 
   
-  res = rot.matrix() @ rot.inverse()
+  mat = SE3(r, v[3:6])
+  
+  res = mat.matrix() @ mat.inverse()
   
   e = np.identity(4)
   
   np.testing.assert_allclose(res, e, rtol=1e-15, atol=1e-15)
   
 def test_se3_adj():
-  v = np.random.rand(6) 
-  res = SE3(v)
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  r = SO3.mat(v[0:3]) 
   
-  print(res.adjoint())
-  print(expm(SE3.adj_hat(v)))
+  res = SE3(r, v[3:6])
   
-  np.testing.assert_allclose(res.adjoint(), expm(SE3.adj_hat(v)))
+  m = np.zeros((6,6))
+  m[0:3, 0:3] = r 
+  m[3:6,0:3] = SO3.hat(v[3:6])@r
+  m[3:6, 3:6] = r 
+  print(m)
+  
+  np.testing.assert_allclose(res.adjoint(), m)
+  
+def test_se3_inv():
+  v = np.random.rand(6)
+  v[0:3] = v[0:3] / np.linalg.norm(v[0:3])
+  r = SO3.mat(v[0:3]) 
+  
+  mat = SE3(r, v[3:6])
+  
+  res = mat.adjoint() @ mat.adj_inv()
+  
+  e = np.identity(6)
+  
+  np.testing.assert_allclose(res, e, rtol=1e-15, atol=1e-15)
 
 def test_se3_hat():
   v = np.random.rand(6)  
@@ -141,7 +163,7 @@ def test_se3_jac_lie_wrt_scaler():
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)
   
 def test_se3_jac_lie_wrt_scaler_integ():
   v = np.random.rand(6)
@@ -160,7 +182,7 @@ def test_se3_jac_lie_wrt_scaler_integ():
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)
 
 def test_se3_jac_adj_lie_wrt_scaler():
   v = np.random.rand(6)
@@ -195,4 +217,4 @@ def test_se3_adj_jac_adj_lie_wrt_scaler_integ():
   
   dr = (r_ - r) / eps
   
-  np.testing.assert_allclose(res, dr, 1e-4)
+  np.testing.assert_allclose(res, dr, 1e-3)

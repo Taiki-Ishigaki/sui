@@ -4,21 +4,25 @@ from mathrobo.so3 import *
 
 class SE3(LieAbstract):
 
-  def __init__(self, vec = zeros(6), LIB = 'numpy'): 
+  def __init__(self, rot = identity(3), pos = zeros(3), LIB = 'numpy'): 
     '''
     Constructor
     '''
-    self._rot = SO3.mat(vec[0:3])
-    self._pos = SO3.integ_mat(vec[0:3])@vec[3:6]
-
+    self._rot = rot
+    self._pos = pos
     self.lib = LIB
-    
+  
   def matrix(self):
     mat = identity(4)
     mat[0:3,0:3] = self._rot
     mat[0:3,3] = self._pos
     return mat
   
+  def set_matrix(self, mat = identity(4)):
+    self._rot = mat[0:3,0:3]
+    self._pos = mat[0:3,3]
+    return mat
+
   def pos(self):
     return self._pos
   
@@ -38,6 +42,20 @@ class SE3(LieAbstract):
     mat[3:6,3:6] = self._rot
     
     return mat
+  
+  def set_adj_mat(self, mat = identity(6)):
+    self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
+    self._pos = SO3.hat(self._pos, self.lib)@self._rot.transpose()
+
+  def adj_inv(self):
+    mat = zeros((6,6), self.lib)
+    
+    mat[0:3,0:3] = self._rot.transpose()
+    mat[3:6,0:3] = -self._rot.transpose() @ SO3.hat(self._pos, self.lib)
+    mat[3:6,3:6] = self._rot.transpose()
+    
+    return mat
+
 
   @staticmethod
   def hat(vec, LIB = 'numpy'):

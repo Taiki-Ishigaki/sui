@@ -4,14 +4,20 @@ from scipy import integrate
 from mathrobo.so3 import *
 
 def test_so3():
-  res = SO3()
+  v = np.zeros(3)
+  r = SO3.mat(v)
+
+  res = SO3(r)
+  
   e = np.identity(3)
 
   np.testing.assert_array_equal(res.matrix(), e)
   
 def test_so3_inv():
   v = np.random.rand(3) 
-  rot = SO3(v)
+  r = SO3.mat(v)
+  
+  rot = SO3(r)
   
   res = rot.matrix() @ rot.inverse()
   
@@ -21,9 +27,23 @@ def test_so3_inv():
   
 def test_so3_adj():
   v = np.random.rand(3) 
-  res = SO3(v)
+  r = SO3.mat(v)
+  
+  res = SO3(r)
   
   np.testing.assert_array_equal(res.adjoint(), res.matrix())
+  
+def test_so3_adj_inv():
+  v = np.random.rand(3) 
+  r = SO3.mat(v)
+  
+  rot = SO3(r)
+  
+  res = rot.adjoint() @ rot.adj_inv()
+  
+  e = np.identity(3)
+  
+  np.testing.assert_allclose(res, e, rtol=1e-15, atol=1e-15)
 
 def test_so3_hat():
   v = np.random.rand(3)  
