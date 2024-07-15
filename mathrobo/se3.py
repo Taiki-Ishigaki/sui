@@ -4,21 +4,20 @@ from mathrobo.so3 import *
 
 class SE3(LieAbstract):
 
-  def __init__(self, vec = zeros(6), LIB = 'numpy'): 
+  def __init__(self, rot = identity(3), pos = zeros(3), LIB = 'numpy'): 
     '''
     Constructor
     '''
-    self._rot = SO3.mat(vec[0:3])
-    self._pos = SO3.integ_mat(vec[0:3])@vec[3:6]
-
+    self._rot = rot
+    self._pos = pos
     self.lib = LIB
-    
+  
   def matrix(self):
     mat = identity(4)
     mat[0:3,0:3] = self._rot
     mat[0:3,3] = self._pos
     return mat
-  
+
   def pos(self):
     return self._pos
   
