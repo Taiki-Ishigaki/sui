@@ -2,21 +2,21 @@ from mathrobo.lie_abst import *
 from mathrobo.basic import *
 
 class SO3(LieAbstract):
-  def __init__(self, vec = zeros(3), LIB = 'numpy'):
+  def __init__(self, r = identity(3), LIB = 'numpy'):
     '''
     Constructor
     '''
-    self._matrix = SO3.mat(vec)
+    self._rot = r
     self._lib = LIB
     
   def matrix(self):
-    return self._matrix
+    return self._rot
     
   def inverse(self):
-    return self._matrix.transpose()
+    return self._rot.transpose()
 
   def adjoint(self):
-    return self._matrix
+    return self._rot
 
   @staticmethod
   def hat(vec, LIB = 'numpy'):
