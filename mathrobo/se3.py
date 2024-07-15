@@ -17,6 +17,11 @@ class SE3(LieAbstract):
     mat[0:3,0:3] = self._rot
     mat[0:3,3] = self._pos
     return mat
+  
+  def set_matrix(self, mat = identity(4)):
+    self._rot = mat[0:3,0:3]
+    self._pos = mat[0:3,3]
+    return mat
 
   def pos(self):
     return self._pos
@@ -38,6 +43,10 @@ class SE3(LieAbstract):
     
     return mat
   
+  def set_adj_mat(self, mat = identity(6)):
+    self._rot = (mat[0:3,0:3] + mat[3:6,3:6]) * 0.5
+    self._pos = SO3.hat(self._pos, self.lib)@self._rot.transpose()
+
   def adj_inv(self):
     mat = zeros((6,6), self.lib)
     

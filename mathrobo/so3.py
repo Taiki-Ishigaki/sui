@@ -11,12 +11,18 @@ class SO3(LieAbstract):
     
   def matrix(self):
     return self._rot
+  
+  def set_matrix(self, mat = identity(4)):
+    self._rot = mat
     
   def inverse(self):
     return self._rot.transpose()
 
   def adjoint(self):
     return self._rot
+  
+  def set_adj_mat(self, mat = identity(3)):
+    self._rot = mat
 
   def adj_inv(self):
     return self._rot.transpose()
